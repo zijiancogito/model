@@ -81,6 +81,8 @@ class MyIterator(data.Iterator):
   def create_batches(self):
     if self.train:
       def pool(d, random_shuffler):
+        import pdb
+        pdb.set_trace()
         for p in data.batch(d, self.batch_size * 100):
           p_batch = data.batch(
               sorted(p, key=self.sort_key),
