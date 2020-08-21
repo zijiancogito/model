@@ -104,7 +104,11 @@ class MyDataset(data.Dataset):
   def __init__(self, datafile, asm_field, ast_field, test=False, **kwargs):
     fields = [("src", asm_field), ("trg", ast_field)]
     examples = []
-    csv_data = pd.read_csv(datafile)
+    tmp_data = pd.read_csv(datafile)
+    shape = tmp_data.shape[0]
+    drop = shape % 1000
+    csv_data = tmp_data.drop(range(shape - drop, shape))
+    del tmp_data
     import pdb
     pdb.set_trace()
     if test:
