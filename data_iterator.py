@@ -30,7 +30,7 @@ def src_mask(p_src, split, pad):
   # min_len = min([len(ins) for ins in tmp_src])
   # if max_len == min_len:
   #   max_len += 1
-  max_len = p_src.shape[-1] / 2
+  max_len = p_src.shape[-1] // 2
   mask = []
   for i in tmp_src:
     if len(i) < max_len:
