@@ -26,6 +26,8 @@ def src_mask(p_src, split, pad):
       else:
         pass
     tmp_src.append(tmp_index)
+  import pdb
+  pdb.set_trace()
   max_len = max([len(ins) for ins in tmp_src])
   mask = []
   for i in tmp_src:
