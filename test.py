@@ -6,6 +6,10 @@ from my_decode import greedy_decode
 
 from torchtext import data, datasets
 import torch
+import pandas as pd
+import numpy as np
+import os
+
 
 INS_SPLIT = '<split>'
 BLANK_WORD = '<blank>'
@@ -84,6 +88,7 @@ for i, batch in enumerate(test_iter):
     asm = []
     for index in src[0]:
       asm.append(SRC.vocab.itos[index])
+    print(asm)
     dt = [[int(len(asm)/8), len(target), ' '.join(asm), ' '.join(target), ' '.join(trans)]]
     data = pd.DataFrame(columns=field, data=dt)
     if not os.path.exists('translation.csv'):
