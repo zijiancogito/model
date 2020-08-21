@@ -59,8 +59,8 @@ def avg_batch(emb, src, ins_pad, token):
   tmp_emb = emb * mask
   shape = emb.shape
   tmp_emb = tmp_emb.reshape(shape[0], int(emb.shape[1]/token), token, shape[2])
-  opc = torch.index_select(tmp_emb, -2, torch.LongTensor([0]))
-  ops = torch.index_select(tmp_emb, -2, torch.LongTensor(list(range(1,token))))
+  opc = torch.index_select(tmp_emb, -2, torch.LongTensor([0]).cuda())
+  ops = torch.index_select(tmp_emb, -2, torch.LongTensor(list(range(1,token))).cuda())
   ops_avg = torch.mean(ops, dim=-2, keepdim=True)
   concat_op = torch.cat((opc, ops_avg), -1)
   return concat_op.squeeze(-2)
