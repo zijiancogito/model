@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 
 class SimpleLossCompute:
-  def __init__(self, generator, criterion, opt=None):
+  def __init__(self, generator, criterion, opt=None, devices=[-1]):
     self.generator = generator
     self.criterion = criterion
     self.opt = opt

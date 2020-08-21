@@ -5,12 +5,14 @@ from model_utils import make_model, run_epoch
 from label import LabelSmoothing
 from data_iterator import batch_size_fn, rebatch
 from opt import NoamOpt, get_std_opt
-from loss import MultiGPULossCompute
+from loss import MultiGPULossCompute, SimpleLossCompute
 
 import torch.nn as nn
 import torch
 
 tokenize = lambda x: x.split(' ')
+
+devices = [0,1,2,3,4] if torch.cuda.is_available() else [-1]
 
 BLANK_WORD = '<blank>'
 BOS_WORD = '<s>'
@@ -40,14 +42,18 @@ model = make_model(len(SRC.vocab),
                    N=LAYER_NUM,
                    d_model=D_MODEL,
                    h=H)
-model.cuda()
+
+if torch.cuda.is_available():
+  model.cuda()
 criterion = LabelSmoothing(size=len(TGT.vocab),
                            padding_idx=tgt_pad_idx,
                            smoothing=LABEL_SMOOTH)
-criterion.cuda()
+if torch.cuda.is_available():
+  criterion.cuda()
+
 train_iter = MyIterator(train,
                         batch_size=BATCH_SIZE,
-                        device=0,
+                        device=0 if torch.cuda.is_available() else -1,
                         repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
@@ -55,14 +61,19 @@ train_iter = MyIterator(train,
                         train=True)
 valid_iter = MyIterator(val,
                         batch_size=BATCH_SIZE,
-                        device=0,
+                        device=0 if torch.cuda.is_available() else -1,
                         repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
                         train=False)
-model_par = nn.DataParallel(model, device_ids=devices)
+if torch.cuda.is_available():
+  model_par = nn.DataParallel(model, device_ids=devices)
+else:
+  model_par = model
 model_opt = get_std_opt(model)
+
+loss_function = MultiGPULossCompute if torch.cuda.is_available() else SimpleLossCompute
 
 for epoch in range(10):
   model_par.train()
@@ -75,7 +86,7 @@ for epoch in range(10):
                     )
                      for b in train_iter),
              model_par,
-             MultiGPULossCompute(model.generator, criterion, devices=devices, opt=model_opt)
+             loss_function(model.generator, criterion, devices=devices, opt=model_opt)
   )
   model_par.eval()
   print("Eval:")
@@ -87,6 +98,6 @@ for epoch in range(10):
                             )
                             for b in valid_iter),
                     model_par,
-                    MultiGPULossCompute(model.generator, criterion, devices=devices, opt=model_opt)
+                    loss_function(model.generator, criterion, devices=devices, opt=model_opt)
   )
   torch.save(model.state_dict(), f'model-{epoch}.pt')

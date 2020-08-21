@@ -13,5 +13,3 @@ LABEL_SMOOTH = 0.1
 TRAIN_FILE = '../../data/train_filter.csv'
 VAL_FILE = '../../data/vali_filter.csv'
 TEST_FILE = '../../data/test_filter.csv'
-
-devices = [0]
