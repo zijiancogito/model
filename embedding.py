@@ -55,8 +55,6 @@ def average_batch(p_batch, p_x, split_index, pad_idx, p_pad_emb):
   return new_batch_cuda
 
 def avg_batch(emb, src, ins_pad, token):
-  import pdb
-  pdb.set_trace()
   mask = (src != ins_pad).unsqueeze(-1)
   tmp_emb = emb * mask
   shape = emb.shape
@@ -65,7 +63,6 @@ def avg_batch(emb, src, ins_pad, token):
   ops = torch.index_select(tmp_emb, -2, torch.LongTensor(list(range(1,token))))
   ops_avg = torch.mean(ops, dim=-2, keepdim=True)
   concat_op = torch.cat((opc, ops_avg), -1)
-  pdb.set_trace()
   return concat_op.squeeze(-2)
 
 class Embeddings(nn.Module):
