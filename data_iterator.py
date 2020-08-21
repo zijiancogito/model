@@ -82,9 +82,6 @@ class MyIterator(data.Iterator):
     if self.train:
       def pool(d, random_shuffler):
         for p in data.batch(d, self.batch_size * 100):
-          print(len(p))
-          import pdb
-          pdb.set_trace()
           p_batch = data.batch(
               sorted(p, key=self.sort_key),
               self.batch_size)
@@ -109,8 +106,6 @@ class MyDataset(data.Dataset):
     drop = shape % 1000
     csv_data = tmp_data.drop(range(shape - drop, shape))
     del tmp_data
-    import pdb
-    pdb.set_trace()
     if test:
       pass
     else:
