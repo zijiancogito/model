@@ -80,14 +80,13 @@ class MyIterator(data.Iterator):
         for p in data.batch(d, self.batch_size * 100):
           p_batch = data.batch(
               sorted(p, key=self.sort_key),
-              self.batch_size, self.batch_size_fn)
+              self.batch_size)
           for b in random_shuffler(list(p_batch)):
             yield b
       self.batches = pool(self.data(), self.random_shuffler)
     else:
       self.batches = []
-      for b in data.batch(self.data(), self.batch_size,
-                                    self.batch_size_fn):
+      for b in data.batch(self.data(), self.batch_size):
         self.batches.append(sorted(b, key=self.sort_key))
 
 def rebatch(src_pad_idx, tgt_pad_idx, split_index, batch, src_token_len, trg_token_len):
