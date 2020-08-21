@@ -26,7 +26,8 @@ def src_mask(p_src, split, pad):
       else:
         pass
     tmp_src.append(tmp_index)
-  max_len = p_src.shape[-1]
+  max_len = max([len(ins) for ins in tmp_src])
+  # max_len = p_src.shape[-1]
   mask = []
   for i in tmp_src:
     if len(i) < max_len:
