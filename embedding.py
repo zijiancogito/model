@@ -59,12 +59,13 @@ def avg_batch(emb, src, ins_pad, token):
   pdb.set_trace()
   mask = (src != ins_pad).unsqueeze(-1)
   tmp_emb = emb * mask
-  tmp_emb = tmp_emb.reshape(emb.shape[0], int(emb.shape[1]/token), token)
-  opc = torch.index_select(tmp_emb, -1, torch.LongTensor([0]))
-  ops = torch.index_select(tmp_emb, -1, torch.LongTensor(list(range(1,token+1))))
-  ops_avg = torch.mean(ops, dim=-1, keepdim=True)
-  concat_op = torch.cat((opc, ops_avg), -1)
-  return concat_op
+  shape = emb.shape
+  tmp_emb = tmp_emb.reshape(shape[0], int(emb.shape[1]/token), token, shape[2])
+  opc = torch.index_select(tmp_emb, -2, torch.LongTensor([0]))
+  ops = torch.index_select(tmp_emb, -2, torch.LongTensor(list(range(1,token+1))))
+  ops_avg = torch.mean(ops, dim=-2, keepdim=True)
+  concat_op = torch.cat((opc, ops_avg), -2)
+  return concat_op.squeeze(-1)
 
 class Embeddings(nn.Module):
   def __init__(self, d_model, vocab, token_len=1, token=0, ins_pad=0, pad_idx=0):
