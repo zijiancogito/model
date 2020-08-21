@@ -15,7 +15,7 @@ tokenize = lambda x: x.split(' ')
 BLANK_WORD = '<blank>'
 BOS_WORD = '<s>'
 EOS_WORD = '</s>'
-SPLIT_WORD = '<split>'
+SPLIT_WORD = '<nop>'
 
 SRC = data.Field(sequential=True, tokenize=tokenize, pad_token=BLANK_WORD, lower=True)
 

@@ -43,10 +43,10 @@ def src_mask(p_src, split, pad):
   return mask_tensor_cuda
 
 class Batch:
-  def __init__(self, src, src_token_len, ins_pad, trg=None, src_pad=0, tgt_pad=0):
+  def __init__(self, src, token, ins_pad, trg=None, src_pad=0, tgt_pad=0):
     self.src = src
     shape = self.src.shape
-    tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/src_token_len), src_token_len]).sum(dim=-1)
+    tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/token), token]).sum(dim=-1)
     self.src_mask = (tmp_src_mask != 0).unsqueeze(-2)
     if trg is not None:
       self.trg = trg[:, :-1]

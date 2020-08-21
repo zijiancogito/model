@@ -59,7 +59,7 @@ def avg_batch(emb, src, ins_pad, token):
   pdb.set_trace()
   mask = (src != ins_pad)
   tmp_emb = emb * mask
-  tmp_emb = tmp_emb.reshape(src.shape[0], int(src.shape[1]/token), token)
+  tmp_emb = tmp_emb.reshape(emb.shape[0], int(emb.shape[1]/token), token)
   opc = torch.index_select(tmp_emb, -1, torch.LongTensor([0]))
   ops = torch.index_select(tmp_emb, -1, torch.LongTensor(list(range(1,token+1))))
   ops_avg = torch.mean(ops, dim=-1, keepdim=True)
