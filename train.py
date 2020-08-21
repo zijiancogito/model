@@ -51,7 +51,7 @@ train_iter = MyIterator(train,
                         device=0,
                         repeat=False,
                         sort=True,
-                        sort_key=lambda x: len(x.src.split(SPLIT_WORD)),
+                        sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
                         train=True)
 valid_iter = MyIterator(val,
@@ -59,7 +59,7 @@ valid_iter = MyIterator(val,
                         device=0,
                         repeat=False,
                         sort=True,
-                        sort_key=lambda x: len(x.src.split(SPLIT_WORD)),
+                        sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
                         train=False)
 model_par = nn.DataParallel(model, device_ids=devices)
