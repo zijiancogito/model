@@ -46,7 +46,6 @@ class Batch:
   def __init__(self, src, src_token_len, ins_pad, trg=None, src_pad=0, tgt_pad=0):
     self.src = src
     shape = self.src.shape
-    # tmp_src = src_mask(src, split_index, src_pad)
     tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/src_token_len), src_token_len]).sum(dim=-1)
     self.src_mask = (tmp_src_mask != 0).unsqueeze(-2)
     if trg is not None:
