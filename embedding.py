@@ -55,6 +55,8 @@ def average_batch(p_batch, p_x, split_index, pad_idx, p_pad_emb):
   return new_batch_cuda
 
 def avg_batch(emb, src, ins_pad, token):
+  import pdb
+  pdb.set_trace()
   mask = (src != ins_pad)
   tmp_emb = emb * mask
   tmp_emb = tmp_emb.reshape(src.shape[0], int(src.shape[1]/token), token)
