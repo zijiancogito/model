@@ -26,10 +26,6 @@ def src_mask(p_src, split, pad):
       else:
         pass
     tmp_src.append(tmp_index)
-  # max_len = max([len(ins) for ins in tmp_src])
-  # min_len = min([len(ins) for ins in tmp_src])
-  # if max_len == min_len:
-  #   max_len += 1
   max_len = p_src.shape[-1] // 2
   mask = []
   for i in tmp_src:
@@ -47,10 +43,12 @@ def src_mask(p_src, split, pad):
   return mask_tensor_cuda
 
 class Batch:
-  def __init__(self, src, src_token_len, trg_token_len, split_index, trg=None, src_pad=0, tgt_pad=0):
+  def __init__(self, src, src_token_len, ins_pad, trg=None, src_pad=0, tgt_pad=0):
     self.src = src
-    tmp_src = src_mask(src, split_index, src_pad)
-    self.src_mask = (tmp_src != src_pad).unsqueeze(-2)
+    shape = self.src.shape
+    # tmp_src = src_mask(src, split_index, src_pad)
+    tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/src_token_len), src_token_len]).sum(dim=-1)
+    self.src_mask = (tmp_src_mask != 0).unsqueeze(-2)
     if trg is not None:
       self.trg = trg[:, :-1]
       self.trg_y = trg[:, 1:]
@@ -93,9 +91,9 @@ class MyIterator(data.Iterator):
       for b in data.batch(self.data(), self.batch_size):
         self.batches.append(sorted(b, key=self.sort_key))
 
-def rebatch(src_pad_idx, tgt_pad_idx, split_index, batch, src_token_len, trg_token_len):
+def rebatch(src_pad_idx, tgt_pad_idx, ins_pad, batch, token):
   src, trg = batch.src.transpose(0, 1), batch.trg.transpose(0, 1)
-  return Batch(src, trg=trg, src_pad=src_pad_idx, tgt_pad=tgt_pad_idx, split_index=split_index,src_token_len=src_token_len, trg_token_len=trg_token_len)
+  return Batch(src, token, ins_pad, trg, src_pad_idx, tgt_pad_idx)
 
 class MyDataset(data.Dataset):
   def __init__(self, datafile, asm_field, ast_field, test=False, **kwargs):

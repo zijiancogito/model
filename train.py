@@ -71,8 +71,7 @@ for epoch in range(10):
                      tgt_pad_idx,
                      split_idx,
                      b,
-                     src_token_len=SRC_TOKEN_LEN,
-                     trg_token_len=TRG_TOEKN_LEN,
+                     SRC_TOKEN
                     )
                      for b in train_iter),
              model_par,
@@ -84,8 +83,7 @@ for epoch in range(10):
                             tgt_pad_idx,
                             split_idx,
                             b,
-                            src_token_len=SRC_TOKEN_LEN,
-                            trg_token_len=TRG_TOEKN_LEN,
+                            SRC_TOKEN
                             )
                             for b in valid_iter),
                     model_par,

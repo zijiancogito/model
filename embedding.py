@@ -54,24 +54,33 @@ def average_batch(p_batch, p_x, split_index, pad_idx, p_pad_emb):
     new_batch_cuda = new_batch
   return new_batch_cuda
 
+def avg_batch(emb, src, ins_pad, token):
+  import pdb
+  pdb.set_trace()
+  mask = (src != ins_pad)
+  tmp_emb = emb * mask
+  tmp_emb = tmp_emb.reshape(src.shape[0], int(src.shape[1]/token), token)
+  opc = torch.index_select(tmp_emb, -1, torch.LongTensor([0]))
+  ops = torch.index_select(tmp_emb, -1, torch.LongTensor(list(range(1,token+1))))
+  ops_avg = torch.mean(ops, dim=-1, keepdim=True)
+  concat_op = torch.cat((opc, ops_avg), -1)
+  return concat_op
+
 class Embeddings(nn.Module):
-  def __init__(self, d_model, vocab, token_len, split_idx, pad_idx):
+  def __init__(self, d_model, vocab, token_len=1, token=0, ins_pad=0, pad_idx=0):
     super(Embeddings, self).__init__()
     self.lut = nn.Embedding(vocab, int(d_model/token_len))
     self.d_model = d_model
+    self.token = token
     self.token_len = token_len
-    self.split_index = split_idx
+    self.ins_pad = ins_pad
     self.vocab = vocab
     self.pad_idx = pad_idx
 
   def forward(self, x):
-    pad_tensor = torch.Tensor([self.pad_idx]).long()
-    pad_emb = nn.Embedding(self.vocab, self.d_model)(pad_tensor) * math.sqrt(self.d_model)
-    if torch.cuda.is_available():
-      pad_emb = pad_emb.cuda()
     tmp_emb = self.lut(x) * math.sqrt(int(self.d_model / self.token_len))
     if self.token_len > 1:
-      emb = average_batch(tmp_emb, x, self.split_index, self.pad_idx, pad_emb)
+      emb = avg_batch(tmp_emb, x, self.ins_pad, self.token)
     else:
       emb = tmp_emb
     return emb
