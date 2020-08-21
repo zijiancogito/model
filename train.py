@@ -42,7 +42,7 @@ model = make_model(len(SRC.vocab),
                    d_model=D_MODEL,
                    h=H)
 model.cuda()
-criterion = LabelSmoothing(size=len(TGT.vocabc),
+criterion = LabelSmoothing(size=len(TGT.vocab),
                            padding_idx=tgt_pad_idx,
                            smoothing=LABEL_SMOOTH)
 criterion.cuda()
