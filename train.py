@@ -12,7 +12,6 @@ import torch
 
 tokenize = lambda x: x.split(' ')
 
-INS_SPLIT = '<split>'
 BLANK_WORD = '<blank>'
 BOS_WORD = '<s>'
 EOS_WORD = '</s>'
@@ -49,7 +48,7 @@ criterion.cuda()
 train_iter = MyIterator(train,
                         batch_size=BATCH_SIZE,
                         device=0,
-                        repeat=False,
+                        repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
@@ -57,7 +56,7 @@ train_iter = MyIterator(train,
 valid_iter = MyIterator(val,
                         batch_size=BATCH_SIZE,
                         device=0,
-                        repeat=False,
+                        repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
@@ -67,6 +66,7 @@ model_opt = get_std_opt(model)
 
 for epoch in range(10):
   model_par.train()
+  print("Train:")
   run_epoch((rebatch(src_pad_idx,
                      tgt_pad_idx,
                      split_idx,
@@ -79,6 +79,7 @@ for epoch in range(10):
              MultiGPULossCompute(model.generator, criterion, devices=devices, opt=model_opt)
   )
   model_par.eval()
+  print("Eval:")
   loss = run_epoch((rebatch(src_pad_idx,
                             tgt_pad_idx,
                             split_idx,

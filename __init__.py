@@ -8,3 +8,4 @@ from . import opt
 from . import data_iterator
 from . import loss
 from . import model_utils
+from . import my_decode
