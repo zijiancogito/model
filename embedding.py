@@ -35,8 +35,8 @@ def average_batch(p_batch, p_x, split_index, pad_idx, p_pad_emb):
   t_batch_list = []
   for emb, index in zip(batch, x):
     t_batch_list.append(average_emb(emb, index, split_index, pad_idx))
-  max_len = max([len(emb) for emb in t_batch_list]) + 1
-  # max_len = p_batch.shape[-2]
+  # max_len = max([len(emb) for emb in t_batch_list])
+  max_len = p_batch.shape[-2]
   batch_list = []
   for emb in t_batch_list:
     if len(emb) < max_len:
