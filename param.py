@@ -9,8 +9,8 @@ H = 8
 
 LABEL_SMOOTH = 0.1
 
-TRAIN_FILE = '../data/avg/train.csv'
-VAL_FILE = '../data/avg/vali.csv'
-TEST_FILE = '../data/avg/test.csv'
+TRAIN_FILE = '../../data/avg/train.csv'
+VAL_FILE = '../../data/avg/vali.csv'
+TEST_FILE = '../../data/avg/test.csv'
 
 devices = [0, 1, 2, 3, 4]
