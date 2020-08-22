@@ -89,6 +89,10 @@ for i, batch in enumerate(test_iter):
   print()
   asm = []
   for index in src[0]:
+    if index == src_pad_idx:
+      break
+    if index == split_idx:
+      continue
     asm.append(SRC.vocab.itos[index])
   print(asm)
   dt = [[int(len(asm)/8), len(target), ' '.join(asm), ' '.join(target), ' '.join(trans)]]
