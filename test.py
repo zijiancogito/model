@@ -34,13 +34,14 @@ tgt_pad_idx = TGT.vocab.stoi["<blank>"]
 split_idx = SRC.vocab.stoi['<split>']
 
 print("Loading model...")
-model = make_model(len(SRC.vocab), 
-                   len(TGT.vocab), 
-                   src_token_len=SRC_TOKEN_LEN, trg_token_len=TRG_TOEKN_LEN,
-                   split_idx=split_idx,
+model = make_model(len(SRC.vocab),
+                   len(TGT.vocab),
+                   src_token_len=SRC_TOKEN_LEN,
+                   token=SRC_TOKEN,
+                   ins_pad=split_idx,
                    pad_idx=src_pad_idx,
                    N=LAYER_NUM,
-                   d_model=D_MODEL, 
+                   d_model=D_MODEL,
                    h=H)
 
 model.load_state_dict(torch.load('model/model-4.pt', map_location=torch.device('cpu')))
