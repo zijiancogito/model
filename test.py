@@ -57,46 +57,45 @@ field = ["asm_length", "ast_length", "asm", "target", "translation"]
 count=0
 
 for i, batch in enumerate(test_iter):
-  for j in batch.src.transpose(0, 1):
-    src = j
-    shape = src.shape
-    tmp_src_mask = (src != src_pad_idx).unsqueeze(-2).reshape([shape[0], int(shape[1]/SRC_TOKEN), SRC_TOKEN]).sum(dim=-1)
-    mask = (tmp_src_mask != 0).unsqueeze(-2)
-    out = greedy_decode(model, src, mask, 
-                        max_len=MAX_LEN, 
-                        start_symbol=TGT.vocab.stoi["<s>"])
-    print("Translation:", end="\t")
-    trans = []
-    for j in range(1, out.size(1)):
-      # print(out[0,i])
-      sym = TGT.vocab.itos[out[0, j]]
-      if sym == "</s>": 
-        trans.append(sym)
-        print("</s>")
-        break
-      print(sym, end=" ")
+  src = batch.src.transpose(0, 1)[:1]
+  shape = src.shape
+  tmp_src_mask = (src != src_pad_idx).unsqueeze(-2).reshape([shape[0], int(shape[1]/SRC_TOKEN), SRC_TOKEN]).sum(dim=-1)
+  mask = (tmp_src_mask != 0).unsqueeze(-2)
+  out = greedy_decode(model, src, mask, 
+                      max_len=MAX_LEN, 
+                      start_symbol=TGT.vocab.stoi["<s>"])
+  print("Translation:", end="\t")
+  trans = []
+  for j in range(1, out.size(1)):
+    # print(out[0,i])
+    sym = TGT.vocab.itos[out[0, j]]
+    if sym == "</s>": 
       trans.append(sym)
-    print()
-    print("Target:", end="\t")
-    target = []
-    for j in range(1, batch.trg.size(0)):
-      sym = TGT.vocab.itos[batch.trg.data[j, 0]]
-      if sym == "</s>":
-        target.append(sym)
-        break
-      print(sym, end=" ")
+      print("</s>")
+      break
+    print(sym, end=" ")
+    trans.append(sym)
+  print()
+  print("Target:", end="\t")
+  target = []
+  for j in range(1, batch.trg.size(0)):
+    sym = TGT.vocab.itos[batch.trg.data[j, 0]]
+    if sym == "</s>":
       target.append(sym)
-    print()
-    print()
-    asm = []
-    for index in src[0]:
-      asm.append(SRC.vocab.itos[index])
-    print(asm)
-    dt = [[int(len(asm)/8), len(target), ' '.join(asm), ' '.join(target), ' '.join(trans)]]
-    data = pd.DataFrame(columns=field, data=dt)
-    if not os.path.exists('translation.csv'):
-      data.to_csv('translation.csv', mode='a+', encoding='utf-8', header=True)
-    else:
-      data.to_csv('translation.csv', mode='a', encoding='utf-8', header=False)
-    # break
-    count+=1
+      break
+    print(sym, end=" ")
+    target.append(sym)
+  print()
+  print()
+  asm = []
+  for index in src[0]:
+    asm.append(SRC.vocab.itos[index])
+  print(asm)
+  dt = [[int(len(asm)/8), len(target), ' '.join(asm), ' '.join(target), ' '.join(trans)]]
+  data = pd.DataFrame(columns=field, data=dt)
+  if not os.path.exists('translation.csv'):
+    data.to_csv('translation.csv', mode='a+', encoding='utf-8', header=True)
+  else:
+    data.to_csv('translation.csv', mode='a', encoding='utf-8', header=False)
+  # break
+  count+=1
