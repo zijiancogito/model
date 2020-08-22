@@ -31,7 +31,7 @@ TGT.build_vocab(train)
 devices = [0, 1, 2, 3, 4]
 src_pad_idx = SRC.vocab.stoi["<blank>"]
 tgt_pad_idx = TGT.vocab.stoi["<blank>"]
-split_idx = SRC.vocab.stoi['<split>']
+split_idx = SRC.vocab.stoi['<nop>']
 
 print("Loading model...")
 model = make_model(len(SRC.vocab),
