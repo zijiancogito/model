@@ -1,3 +1,4 @@
+#!(CUDA_VISIBLE_DEVICES=-1)
 from param import *
 from data_iterator import MyDataset, MyIterator
 from model_utils import make_model
@@ -9,7 +10,6 @@ import torch
 import pandas as pd
 import numpy as np
 import os
-
 
 INS_SPLIT = '<split>'
 BLANK_WORD = '<blank>'
