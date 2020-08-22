@@ -59,8 +59,9 @@ count=0
 for i, batch in enumerate(test_iter):
   for j in batch.src.transpose(0, 1):
     src = j
-    tmp_src = src_mask(src, split_idx, src_pad_idx)
-    mask = (tmp_src != src_pad_idx).unsqueeze(-2)
+    shape = src.shape
+    tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/token), token]).sum(dim=-1)
+    mask = (tmp_src_mask != 0).unsqueeze(-2)
     out = greedy_decode(model, src, mask, 
                         max_len=MAX_LEN, 
                         start_symbol=TGT.vocab.stoi["<s>"])
