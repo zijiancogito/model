@@ -1,6 +1,9 @@
+from torch.autograd import Variable
+import torch
+
+from data_iterator import subsequent_mask
 
 def greedy_decode(model, src, src_mask, max_len, start_symbol):
-  printf("greedy_decode()")
   memory = model.encode(src, src_mask)
   ys = torch.ones(1, 1).fill_(start_symbol).type_as(src.data)
   for i in range(max_len - 1):
