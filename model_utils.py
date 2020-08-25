@@ -58,7 +58,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
       for i in range(500 - 1):
         prob = model.generator(out)
         _, next_word = torch.max(prob, dim=2)
-        next_word = next_word.data[0]
+        _, next_word = torch.max(next_word, dim=1)
         ys = torch.cat([ys, next_word], dim=1)
         print(vocab.itos[next_word])
       print(ys)
