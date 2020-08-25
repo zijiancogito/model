@@ -52,15 +52,14 @@ def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
     # Compute BLEU
     shape = batch.src.shape
     if True:
-      ys = torch.ones(shape[0], 1, 1).fill_(start_index).type_as(batch.src.data)
+      ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
       import pdb
       pdb.set_trace()
       for i in range(500 - 1):
         prob = model.generator(out)
         _, next_word = torch.max(prob, dim=2)
         next_word = next_word.data[0]
-        ys = torch.cat([ys,
-                        torch.ones(1, 1).type_as(batch.src.data).fill_(next_word)], dim=1)
+        ys = torch.cat([ys, next_word, dim=1)
         print(vocab.itos[next_word])
       print(ys)
       import pdb
