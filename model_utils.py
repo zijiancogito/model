@@ -55,7 +55,7 @@ def run_epoch(data_iter, model, loss_compute):
     _, next_word = torch.max(prob, dim=1)
     next_word = next_word.data[0]
     ys = torch.cat([ys,
-                    torch.ones(1, 1).type_as(src.data).fill_(next_word)], dim=1)
+                    torch.ones(1, 1).type_as(bathc.src.data).fill_(next_word)], dim=1)
     print(ys)
     import pdb
     pdb.set_trace()
