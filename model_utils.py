@@ -50,7 +50,7 @@ def run_epoch(data_iter, model, loss_compute, start, train=True):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
 
     # Compute BLEU
-    if not train:
+    if True:
       ys = torch.ones(1, 1).fill_().type_as(batch.src.data)
       prob = model.generator(out[:, -1])
       _, next_word = torch.max(prob, dim=1)
