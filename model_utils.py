@@ -50,6 +50,7 @@ def run_epoch(data_iter, model, loss_compute):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
 
     # Compute BLEU
+    ys = torch.ones(1, 1).fill_(start_symbol).type_as(batch.src.data)
     prob = model.generator(out[:, -1])
     _, next_word = torch.max(prob, dim=1)
     next_word = next_word.data[0]
