@@ -41,7 +41,7 @@ def make_model(src_vocab,
       nn.init.xavier_uniform(p)
   return model
 
-def run_epoch(data_iter, model, loss_compute, start, vocab, train=True):
+def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
   start = time.time()
   total_tokens = 0
   total_loss = 0
@@ -51,7 +51,7 @@ def run_epoch(data_iter, model, loss_compute, start, vocab, train=True):
 
     # Compute BLEU
     if True:
-      ys = torch.ones(1, 1).fill_(start).type_as(batch.src.data)
+      ys = torch.ones(1, 1).fill_(start_index).type_as(batch.src.data)
       import pdb
       pdb.set_trace()
       for i in range(500 - 1):
