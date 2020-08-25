@@ -41,7 +41,7 @@ def make_model(src_vocab,
       nn.init.xavier_uniform(p)
   return model
 
-def run_epoch(data_iter, model, loss_compute, start, train=True):
+def run_epoch(data_iter, model, loss_compute, start, , vocab, train=True):
   start = time.time()
   total_tokens = 0
   total_loss = 0
@@ -52,11 +52,13 @@ def run_epoch(data_iter, model, loss_compute, start, train=True):
     # Compute BLEU
     if True:
       ys = torch.ones(1, 1).fill_(start).type_as(batch.src.data)
-      prob = model.generator(out[:, -1])
-      _, next_word = torch.max(prob, dim=1)
-      next_word = next_word.data[0]
-      ys = torch.cat([ys,
-                      torch.ones(1, 1).type_as(batch.src.data).fill_(next_word)], dim=1)
+      for i in range(500 - 1):
+        prob = model.generator(out[:, -1])
+        _, next_word = torch.max(prob, dim=1)
+        next_word = next_word.data[0]
+        ys = torch.cat([ys,
+                        torch.ones(1, 1).type_as(batch.src.data).fill_(next_word)], dim=1)
+        print(vocab.itos[next_word])
       print(ys)
       import pdb
       pdb.set_trace()
