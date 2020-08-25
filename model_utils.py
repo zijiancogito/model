@@ -59,7 +59,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
         prob = model.generator(out)
         _, next_word = torch.max(prob, dim=2)
         index = torch.LongTensor([0]).cuda() if torch.cuda.is_available() else torch.LongTensor([0])
-        next_word = torch.index_select(tmp_emb, -1, index1)
+        next_word = torch.index_select(next_word, -1, index)
         ys = torch.cat([ys, next_word], dim=1)
         print(vocab.itos[next_word])
       print(ys)
