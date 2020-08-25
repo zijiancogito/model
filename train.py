@@ -86,7 +86,7 @@ for epoch in range(10):
                     )
                      for b in train_iter),
              model_par,
-             loss_function(model.generator, criterion, devices=devices, opt=model_opt)
+             loss_function(model.generator, criterion, devices=devices, opt=model_opt, start=TGT.vocab.stoi["<s>"], Train=True)
   )
   model_par.eval()
   print("Eval:")
@@ -98,6 +98,6 @@ for epoch in range(10):
                             )
                             for b in valid_iter),
                     model_par,
-                    loss_function(model.generator, criterion, devices=devices, opt=model_opt)
+                    loss_function(model.generator, criterion, devices=devices, opt=model_opt, start=TGT.vocab.stoi["<s>"], train=False)
   )
   torch.save(model.state_dict(), f'model-{epoch}.pt')
