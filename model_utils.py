@@ -50,8 +50,9 @@ def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
 
     # Compute BLEU
+    shape = batch.src.shape
     if True:
-      ys = torch.ones(1, 1).fill_(start_index).type_as(batch.src.data)
+      ys = torch.ones(shape[0], 1, 1).fill_(start_index).type_as(batch.src.data)
       import pdb
       pdb.set_trace()
       for i in range(500 - 1):
