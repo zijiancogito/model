@@ -52,8 +52,10 @@ def run_epoch(data_iter, model, loss_compute, start, vocab, train=True):
     # Compute BLEU
     if True:
       ys = torch.ones(1, 1).fill_(start).type_as(batch.src.data)
+      import pdb
+      pdb.set_trace()
       for i in range(500 - 1):
-        prob = model.generator(out[:, -1])
+        prob = model.generator(out)
         _, next_word = torch.max(prob, dim=1)
         next_word = next_word.data[0]
         ys = torch.cat([ys,
