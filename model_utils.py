@@ -62,7 +62,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, m, tr
         next_word = torch.index_select(next_word, -1, index)
         ys = torch.cat([ys, next_word], dim=1)
       from bleu import bleu_score
-      bleu, _ = bleu_score(ys, batch.trg)
+      score, _ = bleu_score(ys, batch.trg)
     # Compute LOSS
     loss = loss_compute(out, batch.trg_y, batch.ntokens)
     total_loss += loss
@@ -71,7 +71,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, m, tr
     if i % 50 == 1:
       elapsed = time.time() - start
       print("Epoch Step: %d Loss: %f Tokens per Sec: %f BLEU Score: %.2f" %
-              (i, loss / batch.ntokens, tokens / elapsed, bleu))
+              (i, loss / batch.ntokens, tokens / elapsed, score))
       start = time.time()
       tokens = 0
   return total_loss / total_tokens
