@@ -80,11 +80,12 @@ def compute_bleu(reference_corpus,
 
 def bleu_score(predictions, labels, **unused_kwargs):
   outputs = predictions
+  import pdb
+  pdb.set_trace()
   # outputs = torch.squeeze(outputs, dim=[-1, -2])
   # labels = torch.squeeze(labels, dim=[-1, -2])
 
   bleu = compute_bleu(labels, outputs)
-  import pdb
-  pdb.set_trace()
+  
   print(bleu)
   return bleu, 1.0
