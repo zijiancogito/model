@@ -51,7 +51,8 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, m, tr
 
     # Compute BLEU
     shape = batch.src.shape
-    if True:
+    score = 0.0
+    if not train:
       ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data).cuda() if torch.cuda.is_available() else torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
       # import pdb
       # pdb.set_trace()
