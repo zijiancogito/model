@@ -55,7 +55,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, m, tr
       ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data).cuda() if torch.cuda.is_available() else torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
       # import pdb
       # pdb.set_trace()
-      for i in range(500 - 1):
+      for j in range(500 - 1):
         prob = model.module.generator(out)
         _, next_word = torch.max(prob, dim=2)
         index = torch.LongTensor([0]).cuda() if torch.cuda.is_available() else torch.LongTensor([0])
