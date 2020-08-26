@@ -51,10 +51,10 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
 
     # Compute BLEU
     shape = batch.src.shape
-    if True:
+    if not train:
       ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
-      import pdb
-      pdb.set_trace()
+      # import pdb
+      # pdb.set_trace()
       for i in range(500 - 1):
         prob = model.generator(out)
         _, next_word = torch.max(prob, dim=2)
@@ -62,7 +62,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
         next_word = torch.index_select(next_word, -1, index)
         ys = torch.cat([ys, next_word], dim=1)
       from bleu import bleu_score
-      bleu_score(ys, batch.trg)
+      bleu, _ = bleu_score(ys, batch.trg)
     # Compute LOSS
     loss = loss_compute(out, batch.trg_y, batch.ntokens)
     total_loss += loss
@@ -70,8 +70,8 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
     tokens += batch.ntokens
     if i % 50 == 1:
       elapsed = time.time() - start
-      print("Epoch Step: %d Loss: %f Tokens per Sec: %f" %
-              (i, loss / batch.ntokens, tokens / elapsed))
+      print("Epoch Step: %d Loss: %f Tokens per Sec: %f BLEU Score: %.2f" %
+              (i, loss / batch.ntokens, tokens / elapsed, bleu))
       start = time.time()
       tokens = 0
   return total_loss / total_tokens
