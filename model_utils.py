@@ -61,11 +61,8 @@ def run_epoch(data_iter, model, loss_compute, start_index, vocab, train=True):
         index = torch.LongTensor([0]).cuda() if torch.cuda.is_available() else torch.LongTensor([0])
         next_word = torch.index_select(next_word, -1, index)
         ys = torch.cat([ys, next_word], dim=1)
-        print(vocab.itos[next_word])
-      print(ys)
-      import pdb
-      pdb.set_trace()
-
+      from bleu import bleu_score
+      bleu_score(ys, batch.trg)
     # Compute LOSS
     loss = loss_compute(out, batch.trg_y, batch.ntokens)
     total_loss += loss
