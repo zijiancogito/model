@@ -41,30 +41,28 @@ def make_model(src_vocab,
       nn.init.xavier_uniform(p)
   return model
 
-def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, m, train=True):
+def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train=True):
   start = time.time()
   total_tokens = 0
   total_loss = 0
   tokens = 0
+  score = 0.0
   for i, batch in enumerate(data_iter):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
-
     # Compute BLEU
     shape = batch.src.shape
-    score = 0.0
-    if not train:
-      ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data).cuda() if torch.cuda.is_available() else torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
-      # import pdb
-      # pdb.set_trace()
-      for j in range(500 - 1):
-        prob = model.module.generator(out)
-        _, next_word = torch.max(prob, dim=2)
-        index = torch.LongTensor([0]).cuda() if torch.cuda.is_available() else torch.LongTensor([0])
-        next_word = torch.index_select(next_word, -1, index)
-        ys = torch.cat([ys, next_word], dim=1)
-      from bleu import bleu_score
-      score, _ = bleu_score(ys, batch.trg)
-    # Compute LOSS
+    # if not train:
+    #   ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data).cuda() if torch.cuda.is_available() else torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
+    #   for j in range(500 - 1):
+    #     prob = model.module.generator(out)
+    #     _, next_word = torch.max(prob, dim=2)
+    #     index = torch.LongTensor([0]).cuda() if torch.cuda.is_available() else torch.LongTensor([0])
+    #     next_word = torch.index_select(next_word, -1, index)
+    #     ys = torch.cat([ys, next_word], dim=1)
+    #   from bleu import bleu_score
+    #   tmp_score, _ = bleu_score(ys, batch.trg)
+    #   score = score + tmp_score
+    # Compute LOSSs
     loss = loss_compute(out, batch.trg_y, batch.ntokens)
     total_loss += loss
     total_tokens += batch.ntokens

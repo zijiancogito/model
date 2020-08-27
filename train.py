@@ -89,8 +89,7 @@ for epoch in range(10):
              loss_function(model.generator, criterion, devices=devices, opt=model_opt), 
              start_index=TGT.vocab.stoi["<s>"], train=True,
              pad_idx=TGT.vocab.stoi[BLANK_WORD],
-             vocab=TGT.vocab,
-             m=model
+             vocab=TGT.vocab
   )
   model_par.eval()
   print("Eval:")
@@ -105,7 +104,6 @@ for epoch in range(10):
                     loss_function(model.generator, criterion, devices=devices, opt=model_opt), 
                     start_index=TGT.vocab.stoi["<s>"], train=False,
                     pad_idx=TGT.vocab.stoi[BLANK_WORD],
-                    vocab=TGT.vocab,
-                    m=model
+                    vocab=TGT.vocab
   )
   torch.save(model.state_dict(), f'model-{epoch}.pt')

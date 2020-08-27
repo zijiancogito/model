@@ -2,6 +2,7 @@ import collections
 import math
 import numpy as np
 import torch
+import torch.nn as nn
 
 def _get_ngrams(segment, max_order):
   """Extracts all n-grams up to a given maximum order from an input segment.
@@ -89,3 +90,25 @@ def bleu_score(predictions, labels, **unused_kwargs):
   
   # print(bleu)
   return bleu, 1.0
+
+# class MultiGPUBleu:
+#   def __init__(self, generator, devices, opt=None, chunk_size=4):
+#     self.generator = generator
+#     self.devices = devices
+#     self.chunk_size = chunk_size
+#     self.opt = opt
+  
+#   def __call__(self, out, targets):
+#     total = 0.0
+#     generator = nn.parallel.replicate(self.generator, devices=self.devices)
+
+#     out_scatter = nn.parallel.scatter(out, target_gpus=self.devices)
+#     out_grad = [[] for _ in out_scatter]
+#     targets = nn.parallel.scatter(targets, target_gpus=self.devices)
+
+#     chunk_size = self.chunk_size
+#     for i in range(0, out_scatter[0].size(1), chunk_size):
+#       out_column = [[Variable(o[:, i:i+chunk_size].data,
+#                                 requires_grad=self.opt is not None)]
+#                      for o in out_scatter]
+#       gen = nn.parallel.parallel_apply(generator, out_column)
