@@ -6,7 +6,7 @@ from label import LabelSmoothing
 from data_iterator import batch_size_fn, rebatch
 from opt import NoamOpt, get_std_opt
 from loss import MultiGPULossCompute, SimpleLossCompute
-
+from bleu import ComputeAccuracy
 import torch.nn as nn
 import torch
 
@@ -48,8 +48,11 @@ if torch.cuda.is_available():
 criterion = LabelSmoothing(size=len(TGT.vocab),
                            padding_idx=tgt_pad_idx,
                            smoothing=LABEL_SMOOTH)
+accuracy = ComputeAccuracy(mask_index=tgt_pad_idx)
+
 if torch.cuda.is_available():
   criterion.cuda()
+  accuracy.cuda()
 
 train_iter = MyIterator(train,
                         batch_size=BATCH_SIZE,
@@ -86,10 +89,7 @@ for epoch in range(10):
                     )
                      for b in train_iter),
              model_par,
-             loss_function(model.generator, criterion, devices=devices, opt=model_opt), 
-             start_index=TGT.vocab.stoi["<s>"], train=True,
-             pad_idx=TGT.vocab.stoi[BLANK_WORD],
-             vocab=TGT.vocab
+             loss_function(model.generator, criterion, accuracy, devices=devices, opt=model_opt)
   )
   model_par.eval()
   print("Eval:")
@@ -101,9 +101,6 @@ for epoch in range(10):
                             )
                             for b in valid_iter),
                     model_par,
-                    loss_function(model.generator, criterion, devices=devices, opt=model_opt), 
-                    start_index=TGT.vocab.stoi["<s>"], train=False,
-                    pad_idx=TGT.vocab.stoi[BLANK_WORD],
-                    vocab=TGT.vocab
+                    loss_function(model.generator, criterion, accuracy, devices=devices, opt=model_opt)
   )
   torch.save(model.state_dict(), f'model-{epoch}.pt')

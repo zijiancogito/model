@@ -3,21 +3,19 @@ import torch.nn as nn
 from torch.autograd import Variable
 
 class SimpleLossCompute:
-  def __init__(self, generator, criterion, opt=None, devices=[-1]):
+  def __init__(self, generator, criterion, accuracy, opt=None, devices=[-1]):
     self.generator = generator
     self.criterion = criterion
+    self.accuracy = accuracy
     self.opt = opt
   
-  def __call__(self, x, y, norm, pad_index=0):
+  def __call__(self, x, y, norm):
     x = self.generator(x)
     loss = self.criterion(x.contiguous().view(-1, x.size(-1)),
                           y.contiguous().view(-1)) / norm
     _, x_pred = x.contiguous().view(-1, x.size(-1)).max(dim=-1)
     y_true = y.contiguous().view(-1)
-    correct_indices = torch.eq(x_pred, y_true).float()
-    valid_indices = torch.ne(y_true, pad_index).float()
-    n_correct = (correct_indices * valid_indices).sum().item()
-    n_valid = valid_indices.sum().item()
+    n_correct, n_valid = self.accuracy(x_pred, y_true)
     loss.backward()
     if self.opt is not None:
       self.opt.step()
@@ -25,26 +23,16 @@ class SimpleLossCompute:
     return loss.data * norm, n_correct, n_valid
 
 class MultiGPULossCompute:
-  def __init__(self, generator, criterion, devices, opt=None, chunk_size=4):
+  def __init__(self, generator, criterion, accuracy, devices, opt=None, chunk_size=4):
     self.generator = generator
     self.criterion = nn.parallel.replicate(criterion, 
                                            devices=devices)
     self.opt = opt
     self.devices = devices
     self.chunk_size = chunk_size
+    self.accuracy = nn.parallel.replicate(accuracy, devices=devices)
 
-  def __call__(self, out, targets, normalize, pad_index):
-    def compute_accuracy(y_pred, y_true, mask_index=pad_index):
-      _, y_pred_indices = y_pred.max(dim=1)
-      correct_indices = torch.eq(y_pred_indices, y_true).float()
-      valid_indices = torch.ne(y_true, mask_index).float()
-      n_correct = (correct_indices * valid_indices).sum().item()
-      return n_correct
-    def compute_valid(y_pred, y_true, mask_index=0):
-      valid_indices = torch.ne(y_true, mask_index).float()
-      n_valid = valid_indices.sum().item()
-      return n_valid
-
+  def __call__(self, out, targets, normalize):
     total = 0.0
     generator = nn.parallel.replicate(self.generator, devices=self.devices)
     out_scatter = nn.parallel.scatter(out, target_gpus=self.devices)
@@ -65,17 +53,16 @@ class MultiGPULossCompute:
       
       loss = nn.parallel.parallel_apply(self.criterion, y)
 
-      correct = nn.parallel.parallel_apply(compute_accuracy, y)
-      all_correct = nn.parallel.gather(correct, target_device=self.devices[0])
-
-      valid = nn.parallel.parallel_apply(compute_valid, y)
-      all_valid = nn.parallel.gather(valid, target_device=self.devices[0])
+      n_correct, n_valid = nn.parallel.parallel_apply(self.accuracy, y)
+      nc = nn.parallel.gather(n_correct, target_device=self.devices[0])
+      nv = nn.parallel.gather(n_valid, target_device=self.devices[0])
 
       l = nn.parallel.gather(loss, target_device=self.devices[0])
       l = l.sum() / normalize
       total += l.data
-      total_valid += all_valid.data
-      total_correct += all_correct.data
+
+      total_correct += nc.data
+      total_valid += nv.data
       if self.opt is not None:
         l.backward()
         for j, l in enumerate(loss):
