@@ -12,6 +12,7 @@ class SimpleLossCompute:
     import pdb
     pdb.set_trace()
     x = self.generator(x)
+    
     loss = self.criterion(x.contiguous().view(-1, x.size(-1)),
                           y.contiguous().view(-1)) / norm
     loss.backward()
@@ -37,6 +38,8 @@ class MultiGPULossCompute:
     targets = nn.parallel.scatter(targets, target_gpus=self.devices)
 
     chunk_size = self.chunk_size
+
+    score = 0.0
     for i in range(0, out_scatter[0].size(1), chunk_size):
       out_column = [[Variable(o[:, i:i+chunk_size].data,
                               requires_grad=self.opt is not None)]
@@ -53,6 +56,8 @@ class MultiGPULossCompute:
         l.backward()
         for j, l in enumerate(loss):
           out_grad[j].append(out_column[j][0].grad.data.clone())
+
+      
     
     if self.opt is not None:
       out_grad = [Variable(torch.cat(og, dim=1)) for og in out_grad]
