@@ -54,8 +54,10 @@ class MultiGPULossCompute:
       loss = nn.parallel.parallel_apply(self.criterion, y)
 
       result = nn.parallel.parallel_apply(self.accuracy, y)
-      import pdb
-      pdb.set_trace()
+      # import pdb
+      # pdb.set_trace()
+      n_correct = [i[0] for i in result]
+      n_valid = [i[1] for i in result]
       nc = nn.parallel.gather(n_correct, target_device=self.devices[0])
       nv = nn.parallel.gather(n_valid, target_device=self.devices[0])
 
