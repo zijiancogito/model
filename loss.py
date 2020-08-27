@@ -8,18 +8,23 @@ class SimpleLossCompute:
     self.criterion = criterion
     self.opt = opt
   
-  def __call__(self, x, y, norm):
+  def __call__(self, x, y, norm, pad_index=0):
     import pdb
     pdb.set_trace()
     x = self.generator(x)
-    
     loss = self.criterion(x.contiguous().view(-1, x.size(-1)),
                           y.contiguous().view(-1)) / norm
+    _, x_pred = x.contiguous().view(-1, x.size(-1)).max(dim=-1)
+    y_true = y.contiguous().view(-1)
+    correct_indices = torch.eq(x_pred, y_true).float()
+    valid_indices = torch.ne(y_true, pad_index).float()
+    n_correct = (correct_indices * valid_indices).sum().item()
+    n_valid = valid_indices.sum().item()
     loss.backward()
     if self.opt is not None:
       self.opt.step()
       self.opt.optimizer.zero_grad()
-    return loss.data * norm
+    return loss.data * norm, n_correct, n_valid
 
 class MultiGPULossCompute:
   def __init__(self, generator, criterion, devices, opt=None, chunk_size=4):

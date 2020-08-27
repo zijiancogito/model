@@ -47,10 +47,12 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
   total_loss = 0
   tokens = 0
   score = 0.0
+  total_correct = 0.0
+  total_valid = 0.0
   for i, batch in enumerate(data_iter):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
     # Compute BLEU
-    shape = batch.src.shape
+    # shape = batch.src.shape
     # if not train:
     #   ys = torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data).cuda() if torch.cuda.is_available() else torch.ones(shape[0], 1).fill_(start_index).type_as(batch.src.data)
     #   for j in range(500 - 1):
@@ -63,14 +65,16 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
     #   tmp_score, _ = bleu_score(ys, batch.trg)
     #   score = score + tmp_score
     # Compute LOSSs
-    loss = loss_compute(out, batch.trg_y, batch.ntokens)
+    loss, ncorrect, nvalid = loss_compute(out, batch.trg_y, batch.ntokens, pad_idx)
     total_loss += loss
     total_tokens += batch.ntokens
+    total_correct += ncorrect
+    total_valid += nvalid
     tokens += batch.ntokens
     if i % 50 == 1:
       elapsed = time.time() - start
       print("Epoch Step: %d Loss: %f Tokens per Sec: %f BLEU Score: %.2f" %
-              (i, loss / batch.ntokens, tokens / elapsed, score))
+              (i, loss / batch.ntokens, tokens / elapsed, total_correct/total_valid*100))
       start = time.time()
       tokens = 0
   return total_loss / total_tokens
