@@ -34,7 +34,7 @@ class MultiGPULossCompute:
     self.chunk_size = chunk_size
 
   def __call__(self, out, targets, normalize, pad_index):
-    def compute_accuracy(y_pred, y_true, mask_index=0):
+    def compute_accuracy(y_pred, y_true, mask_index=pad_index):
       _, y_pred_indices = y_pred.max(dim=1)
       correct_indices = torch.eq(y_pred_indices, y_true).float()
       valid_indices = torch.ne(y_true, mask_index).float()
@@ -70,7 +70,7 @@ class MultiGPULossCompute:
 
       valid = nn.parallel.parallel_apply(compute_valid, y)
       all_valid = nn.parallel.gather(valid, target_device=self.devices[0])
-      
+
       l = nn.parallel.gather(loss, target_device=self.devices[0])
       l = l.sum() / normalize
       total += l.data
