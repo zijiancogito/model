@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 
 class ComputeAccuracy(nn.Module):
   def __init__(self, mask_index=0):
