@@ -73,7 +73,7 @@ def run_epoch(data_iter, model, loss_compute, start_index, pad_idx, vocab, train
     tokens += batch.ntokens
     if i % 50 == 1:
       elapsed = time.time() - start
-      print("Epoch Step: %d Loss: %f Tokens per Sec: %f BLEU Score: %.2f" %
+      print("Epoch Step: %d Loss: %f Tokens per Sec: %f Accu: %f" %
               (i, loss / batch.ntokens, tokens / elapsed, total_correct/total_valid*100))
       start = time.time()
       tokens = 0
