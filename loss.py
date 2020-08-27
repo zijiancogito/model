@@ -58,6 +58,8 @@ class MultiGPULossCompute:
       # pdb.set_trace()
       n_correct = [i[0] for i in result]
       n_valid = [i[1] for i in result]
+      import pdb
+      pdb.set_trace()
       nc = nn.parallel.gather(n_correct, target_device=self.devices[0])
       nv = nn.parallel.gather(n_valid, target_device=self.devices[0])
 
