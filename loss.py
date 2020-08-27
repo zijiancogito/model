@@ -58,17 +58,13 @@ class MultiGPULossCompute:
       # pdb.set_trace()
       n_correct = [i[0] for i in result]
       n_valid = [i[1] for i in result]
-      import pdb
-      pdb.set_trace()
-      nc = nn.parallel.gather(n_correct, target_device=self.devices[0])
-      nv = nn.parallel.gather(n_valid, target_device=self.devices[0])
 
       l = nn.parallel.gather(loss, target_device=self.devices[0])
       l = l.sum() / normalize
       total += l.data
 
-      total_correct += nc.data
-      total_valid += nv.data
+      total_correct += sum(n_correct)
+      total_valid += sum(n_valid)
       if self.opt is not None:
         l.backward()
         for j, l in enumerate(loss):
