@@ -57,7 +57,7 @@ if torch.cuda.is_available():
 train_iter = MyIterator(train,
                         batch_size=BATCH_SIZE,
                         device=0 if torch.cuda.is_available() else -1,
-                        repeat=False,
+                        repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
@@ -65,7 +65,7 @@ train_iter = MyIterator(train,
 valid_iter = MyIterator(val,
                         batch_size=BATCH_SIZE,
                         device=0 if torch.cuda.is_available() else -1,
-                        repeat=False,
+                        repeat=True,
                         sort=True,
                         sort_key=lambda x: x.src.count(SPLIT_WORD),
                         batch_size_fn=batch_size_fn,
@@ -93,7 +93,7 @@ for epoch in range(10):
   )
   model_par.eval()
   print("Eval:")
-  loss = run_epoch((rebatch(src_pad_idx,
+  loss, accu = run_epoch((rebatch(src_pad_idx,
                             tgt_pad_idx,
                             split_idx,
                             b,
@@ -103,4 +103,5 @@ for epoch in range(10):
                     model_par,
                     loss_function(model.generator, criterion, accuracy, devices=devices, opt=model_opt)
   )
+
   torch.save(model.state_dict(), f'model-{epoch}.pt')

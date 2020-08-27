@@ -62,4 +62,4 @@ def run_epoch(data_iter, model, loss_compute):
               (i, loss / batch.ntokens, tokens / elapsed, total_correct/total_valid*100))
       start = time.time()
       tokens = 0
-  return total_loss / total_tokens
+  return total_loss / total_tokens, total_correct / total_valid * 100
