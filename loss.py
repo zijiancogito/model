@@ -53,7 +53,9 @@ class MultiGPULossCompute:
       
       loss = nn.parallel.parallel_apply(self.criterion, y)
 
-      n_correct, n_valid = nn.parallel.parallel_apply(self.accuracy, y)
+      result = nn.parallel.parallel_apply(self.accuracy, y)
+      import pdb
+      pdb.set_trace()
       nc = nn.parallel.gather(n_correct, target_device=self.devices[0])
       nv = nn.parallel.gather(n_valid, target_device=self.devices[0])
 
@@ -67,8 +69,6 @@ class MultiGPULossCompute:
         l.backward()
         for j, l in enumerate(loss):
           out_grad[j].append(out_column[j][0].grad.data.clone())
-
-      
     
     if self.opt is not None:
       out_grad = [Variable(torch.cat(og, dim=1)) for og in out_grad]
