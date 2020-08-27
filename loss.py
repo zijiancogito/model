@@ -9,8 +9,6 @@ class SimpleLossCompute:
     self.opt = opt
   
   def __call__(self, x, y, norm, pad_index=0):
-    import pdb
-    pdb.set_trace()
     x = self.generator(x)
     loss = self.criterion(x.contiguous().view(-1, x.size(-1)),
                           y.contiguous().view(-1)) / norm
