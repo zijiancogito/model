@@ -79,4 +79,5 @@ class MultiGPULossCompute:
       o1.backward(gradient=o2)
       self.opt.step()
       self.opt.optimizer.zero_grad()
+    del out_scatter, targets
     return total * normalize, total_correct, total_valid
