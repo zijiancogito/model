@@ -40,8 +40,8 @@ class MultiGPULossCompute:
     targets = nn.parallel.scatter(targets, target_gpus=self.devices)
 
     chunk_size = self.chunk_size
-    total_correct = 0
-    total_valid = 0
+    total_correct = 0.0
+    total_valid = 0.0
     for i in range(0, out_scatter[0].size(1), chunk_size):
       out_column = [[Variable(o[:, i:i+chunk_size].data,
                               requires_grad=self.opt is not None)]
@@ -54,18 +54,17 @@ class MultiGPULossCompute:
       loss = nn.parallel.parallel_apply(self.criterion, y)
 
       result = nn.parallel.parallel_apply(self.accuracy, y)
-      import pdb
-      pdb.set_trace()
-      # n_correct = [i[0] for i in result]
-      # n_valid = [i[1] for i in result]
+      # import pdb
+      # pdb.set_trace()
       r = nn.parallel.gather(result, target_device=self.devices[0])
       
       l = nn.parallel.gather(loss, target_device=self.devices[0])
       l = l.sum() / normalize
       total += l.data
 
-      # total_correct += sum(n_correct)
-      # total_valid += sum(n_valid)
+      n_r = r.sum(0)
+      total_correct += n_r.data[0]
+      total_valid += n_r.data[1]
       # del n_correct, n_valid, result
       if self.opt is not None:
         l.backward()
