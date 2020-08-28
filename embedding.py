@@ -11,11 +11,14 @@ def avg_batch(emb, src, ins_pad, token):
   tmp_emb = tmp_emb.reshape(shape[0], int(emb.shape[1]/token), token, shape[2])
   index1 = torch.zeros(1).long().cuda() if torch.cuda.is_available() else torch.zeros(1).long()
   opc = torch.index_select(tmp_emb, -2, index1)
+  del index1
   index2 = torch.arange(1,token).cuda() if torch.cuda.is_available() else torch.arange(1,token)
   ops = torch.index_select(tmp_emb, -2, index2)
+  del index2
   ops_avg = torch.mean(ops, dim=-2, keepdim=True)
+  del ops
   concat_op = torch.cat((opc, ops_avg), -1)
-  del ops_avg, ops, index1, index2, opc
+  del ops_avg, opc
   return concat_op.squeeze(-2)
 
 class Embeddings(nn.Module):
