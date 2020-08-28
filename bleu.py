@@ -12,6 +12,4 @@ class ComputeAccuracy(nn.Module):
     valid_indices = torch.ne(y_true, self.mask_index).float()
     n_correct = (correct_indices * valid_indices).sum().squeeze()
     n_valid = valid_indices.sum().squeeze()
-    # import pdb
-    # pdb.set_trace()
     return torch.stack((n_correct, n_valid)).unsqueeze(dim=0)

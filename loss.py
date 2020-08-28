@@ -62,10 +62,10 @@ class MultiGPULossCompute:
       l = l.sum() / normalize
       total += l.data
 
-      n_r = r.sum(0)
-      total_correct += n_r.data[0]
-      total_valid += n_r.data[1]
-      # del n_correct, n_valid, result
+      r = r.sum(0)
+      total_correct += r.data[0]
+      total_valid += r.data[1]
+      del result, loss, r, l, y, gen, out_column
       if self.opt is not None:
         l.backward()
         for j, l in enumerate(loss):
