@@ -65,6 +65,7 @@ class MultiGPULossCompute:
 
       total_correct += sum(n_correct)
       total_valid += sum(n_valid)
+      del n_correct, n_valid, result
       if self.opt is not None:
         l.backward()
         for j, l in enumerate(loss):

@@ -12,42 +12,13 @@ def subsequent_mask(size):
   subsequent_mask = np.triu(np.ones(attn_shape), k=1).astype('uint8')
   return torch.from_numpy(subsequent_mask) == 0
 
-def src_mask(p_src, split, pad):
-  src = p_src.cpu()
-  src = src.detach().numpy().tolist()
-  tmp_src = []
-  for indexs in src:
-    tmp_index = []
-    for idx in indexs:
-      if idx == split:
-        tmp_index.append(idx)
-      elif idx == pad:
-        break
-      else:
-        pass
-    tmp_src.append(tmp_index)
-  max_len = p_src.shape[-1] // 2
-  mask = []
-  for i in tmp_src:
-    if len(i) < max_len:
-      for j in range(max_len - len(i)):
-        i.append(pad)
-      mask.append(i)
-    else:
-      mask.append(i)
-  mask_tensor = torch.Tensor(mask).long()
-  if torch.cuda.is_available():
-    mask_tensor_cuda = mask_tensor.cuda()
-  else:
-    mask_tensor_cuda = mask_tensor
-  return mask_tensor_cuda
-
 class Batch:
   def __init__(self, src, token, ins_pad, trg=None, src_pad=0, tgt_pad=0):
     self.src = src
     shape = self.src.shape
     tmp_src_mask = (src != src_pad).unsqueeze(-2).reshape([shape[0], int(shape[1]/token), token]).sum(dim=-1)
     self.src_mask = (tmp_src_mask != 0).unsqueeze(-2)
+    del tmp_src_mask
     if trg is not None:
       self.trg = trg[:, :-1]
       self.trg_y = trg[:, 1:]
