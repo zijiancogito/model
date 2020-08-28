@@ -47,7 +47,7 @@ def run_epoch(data_iter, model, loss_compute):
   total_loss = 0
   tokens = 0
   total_correct = 0.0
-  total_valid = 0.0
+  total_valid = 1.0
   for i, batch in enumerate(data_iter):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
     loss, ncorrect, nvalid = loss_compute(out, batch.trg_y, batch.ntokens)
