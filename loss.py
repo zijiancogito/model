@@ -65,7 +65,7 @@ class MultiGPULossCompute:
       r = r.sum(0)
       total_correct += r.data[0]
       total_valid += r.data[1]
-      del result, loss, r, l, y, gen, out_column
+      del result, loss, r, y, gen
       if self.opt is not None:
         l.backward()
         for j, l in enumerate(loss):
