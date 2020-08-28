@@ -30,7 +30,9 @@ class Embeddings(nn.Module):
     self.pad_idx = pad_idx
 
   def forward(self, x):
-    emb = self.lut(x) * math.sqrt(int(self.d_model / self.token_len))
+    tmp_emb = self.lut(x) * math.sqrt(int(self.d_model / self.token_len))
     if self.token_len > 1:
-      emb = avg_batch(emb, x, self.ins_pad, self.token)
+      emb = avg_batch(tmp_emb, x, self.ins_pad, self.token)
+    else:
+      emb = tmp_emb
     return emb
