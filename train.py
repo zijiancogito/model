@@ -28,6 +28,8 @@ val = MyDataset(datafile=VAL_FILE, asm_field=SRC, ast_field=TGT)
 
 SRC.build_vocab(train)
 TGT.build_vocab(train)
+print(len(SRC.vocab))
+print(len(TGT.vocab))
 
 src_pad_idx = SRC.vocab.stoi[BLANK_WORD]
 tgt_pad_idx = TGT.vocab.stoi[BLANK_WORD]
