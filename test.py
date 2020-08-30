@@ -2,7 +2,6 @@
 from param import *
 from data_iterator import MyDataset, MyIterator
 from model_utils import make_model
-from data_iterator import src_mask
 from my_decode import greedy_decode
 
 from torchtext import data, datasets
