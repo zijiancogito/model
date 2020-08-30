@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import os
 
-INS_SPLIT = '<split>'
+INS_SPLIT = '<nop>'
 BLANK_WORD = '<blank>'
 BOS_WORD = '<s>'
 EOS_WORD = '</s>'
@@ -44,7 +44,7 @@ model = make_model(len(SRC.vocab),
                    d_model=D_MODEL,
                    h=H)
 
-model.load_state_dict(torch.load('model/model-9.pt', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('model/model-5.pt', map_location=torch.device('cpu')))
 
 test_iter = MyIterator(test, 
                        batch_size=BATCH_SIZE,
