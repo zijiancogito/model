@@ -21,3 +21,15 @@ class PositionalEncoding(nn.Module):
   def forward(self, x):
     x = x + Variable(self.pe[:,:x.size(1)], requires_grad=False)
     return self.dropout(x)
+
+# def _generate_relative_positions_embeddings()
+
+# class MyPositionalEncoding(nn.Module):
+#   def __init__(self, d_model, dropout, max_len=500):
+#     super(MyPositionalEncoding, self).__init__()
+#     self.dropout = nn.Dropout(p=dropout)
+#     pe = torch.zeros(max_len, d_model)
+    
+
+#   def forward(self, x):
+#     return 
