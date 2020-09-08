@@ -103,5 +103,5 @@ for i, batch in enumerate(test_iter):
   count+=1
 
   from visualization import draw, visualization
-  visualization(model, trans)
+  visualization(model, trans, ' '.join(asm))
   break

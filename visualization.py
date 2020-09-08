@@ -12,7 +12,7 @@ def draw(data, x, y, ax):
                   cbar=False,
                   ax=ax)
 
-def visualization(model, trans):
+def visualization(model, trans, sent):
   tgt_sent = trans
   for layer in range(1, 6, 2):
     fig, axs = plt.subplots(1, 4, figsize=(20, 10))
