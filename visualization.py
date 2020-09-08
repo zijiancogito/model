@@ -13,7 +13,7 @@ def draw(data, x, y, ax):
                   ax=ax)
 
 def visualization(model, trans):
-  tgt_sent = trans.split()
+  tgt_sent = trans
   for layer in range(1, 6, 2):
     fig, axs = plt.subplots(1, 4, figsize=(20, 10))
     print("Encoder Layer", layer+1)
