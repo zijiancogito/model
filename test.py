@@ -103,7 +103,9 @@ for i, batch in enumerate(test_iter):
   count+=1
 
   sent = []
-  src_tmp = src[0].reshape([int(src[0].shape/8), 8])
+  import pdb
+  pdb.set_trace()
+  src_tmp = src[0].reshape([int(src[0].shape[0]/8), 8])
 
   for ins in src_tmp:
     tmp_sent = []
