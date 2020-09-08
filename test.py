@@ -105,3 +105,4 @@ for i, batch in enumerate(test_iter):
 
   from visualization import draw, visualization
   visualization(model, trans)
+  break
