@@ -102,6 +102,18 @@ for i, batch in enumerate(test_iter):
   # break
   count+=1
 
+  sent = []
+  src_tmp = src[0].reshape([int(src[0].shape/8), 8])
+
+  for ins in src_tmp:
+    tmp_sent = []
+    for opcode in ins:
+      opc = SRC.vocab.itos[opcode]
+      if opc == '<nop>':
+        break
+      tmp_sent.append(opc)
+    sent.append(''.join(tmp_sent))
+
   from visualization import draw, visualization
-  visualization(model, trans, ' '.join(asm))
+  visualization(model, trans, ' '.join(sent))
   break
