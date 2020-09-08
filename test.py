@@ -27,7 +27,6 @@ test = MyDataset(datafile=TEST_FILE, asm_field=SRC, ast_field=TGT)
 SRC.build_vocab(train)
 TGT.build_vocab(train)
 
-devices = [0, 1, 2, 3, 4]
 src_pad_idx = SRC.vocab.stoi["<blank>"]
 tgt_pad_idx = TGT.vocab.stoi["<blank>"]
 split_idx = SRC.vocab.stoi['<nop>']
@@ -43,7 +42,7 @@ model = make_model(len(SRC.vocab),
                    d_model=D_MODEL,
                    h=H)
 
-model.load_state_dict(torch.load('model/model-5.pt', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('model-5.pt', map_location=torch.device('cpu')))
 
 test_iter = MyIterator(test, 
                        batch_size=BATCH_SIZE,
