@@ -102,3 +102,6 @@ for i, batch in enumerate(test_iter):
     data.to_csv('translation.csv', mode='a', encoding='utf-8', header=False)
   # break
   count+=1
+
+  from visualization import draw, visualization
+  visualization(model, trans)
