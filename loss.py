@@ -11,6 +11,8 @@ class SimpleLossCompute:
   
   def __call__(self, x, y, norm):
     x = self.generator(x)
+    import pdb
+    pdb.set_trace()
     loss = self.criterion(x.contiguous().view(-1, x.size(-1)),
                           y.contiguous().view(-1)) / norm
     _, x_pred = x.contiguous().view(-1, x.size(-1)).max(dim=-1)
