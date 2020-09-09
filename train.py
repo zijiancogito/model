@@ -44,6 +44,7 @@ model = make_model(len(SRC.vocab),
                    N=LAYER_NUM,
                    d_model=D_MODEL,
                    h=H)
+model.load_state_dict(torch.load('model-9.pt'))
 
 if torch.cuda.is_available():
   model.cuda()
@@ -78,7 +79,7 @@ model_opt = get_std_opt(model)
 
 loss_function = MultiGPULossCompute if torch.cuda.is_available() else SimpleLossCompute
 
-for epoch in range(10):
+for epoch in range(20):
   model_par.train()
   print("Train:")
   run_epoch((rebatch(src_pad_idx,

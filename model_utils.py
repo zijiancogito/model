@@ -50,10 +50,7 @@ def run_epoch(data_iter, model, loss_compute):
   total_valid = 0.0
   for i, batch in enumerate(data_iter):
     out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
-    import pdb
-    pdb.set_trace()
     loss, ncorrect, nvalid = loss_compute(out, batch.trg_y, batch.ntokens)
-    pdb.set_trace()
     total_loss += loss
     total_tokens += batch.ntokens
     total_correct += ncorrect
