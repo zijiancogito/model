@@ -7,6 +7,8 @@ class ComputeAccuracy(nn.Module):
     self.mask_index = mask_index
 
   def forward(self, y_pred, y_true):
+    import pdb
+    pdb.set_trace()
     _, y_pred_indices = y_pred.max(dim=1)
     correct_indices = torch.eq(y_pred_indices, y_true).float()
     valid_indices = torch.ne(y_true, self.mask_index).float()
