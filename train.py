@@ -79,7 +79,7 @@ model_opt = get_std_opt(model)
 
 loss_function = MultiGPULossCompute if torch.cuda.is_available() else SimpleLossCompute
 
-for epoch in range(20):
+for epoch in range(10,20):
   model_par.train()
   print("Train:")
   run_epoch((rebatch(src_pad_idx,
